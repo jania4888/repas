@@ -4,6 +4,7 @@ using FactuTrust.API.Authorization;
 using FactuTrust.API.Controllers;
 using FactuTrust.Application.Features.DataExports;
 using FactuTrust.Domain.Common;
+using FactuTrust.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -76,6 +77,65 @@ public sealed class DataExportsControllerTests
         var body = Assert.IsType<ApiResponse<object>>(badRequest.Value);
         Assert.Equal(BusinessDataExportErrors.TooManyRows, body.Code);
         Assert.Contains("20001", body.Error);
+    }
+
+    [Fact]
+    public void ExportPurchaseReceipts_RequiresThePurchaseReceiptsReadPolicy()
+    {
+        var method = typeof(DataExportsController).GetMethod(nameof(DataExportsController.ExportPurchaseReceipts))!;
+
+        Assert.Equal(
+            PermissionPolicies.PurchaseReceiptsRead,
+            method.GetCustomAttribute<AuthorizeAttribute>()!.Policy);
+        Assert.Equal("purchase-receipts", method.GetCustomAttribute<HttpGetAttribute>()!.Template);
+    }
+
+    [Fact]
+    public async Task ExportPurchaseReceipts_ForwardsTheScreenFilters_AndReturnsTheWorkbook()
+    {
+        ExportBusinessDatasetQuery? sent = null;
+        var mediator = new Mock<IMediator>();
+        mediator.Setup(m => m.Send(It.IsAny<ExportBusinessDatasetQuery>(), It.IsAny<CancellationToken>()))
+            .Callback<IRequest<Result<BusinessExportFile>>, CancellationToken>((query, _) => sent = (ExportBusinessDatasetQuery)query)
+            .ReturnsAsync(Result.Success(new BusinessExportFile(new byte[] { 1 }, "Bons_de_reception_20261019_2100.xlsx")));
+        var controller = new DataExportsController(mediator.Object);
+        var supplierId = Guid.NewGuid();
+        var purchaseOrderId = Guid.NewGuid();
+        var from = new DateTime(2026, 1, 1);
+        var to = new DateTime(2026, 1, 31);
+
+        var result = await controller.ExportPurchaseReceipts(
+            "BR-2026", PurchaseReceiptStatus.Draft, supplierId, purchaseOrderId, from, to, CancellationToken.None);
+
+        var file = Assert.IsType<FileContentResult>(result);
+        Assert.Equal(BusinessExportFile.ExcelContentType, file.ContentType);
+        Assert.Equal("Bons_de_reception_20261019_2100.xlsx", file.FileDownloadName);
+        Assert.NotNull(sent);
+        Assert.Equal(BusinessDataset.PurchaseReceipts, sent!.Dataset);
+        Assert.Equal("BR-2026", sent.Criteria.Search);
+        Assert.Equal(PurchaseReceiptStatus.Draft, sent.Criteria.PurchaseReceiptStatus);
+        Assert.Equal(supplierId, sent.Criteria.SupplierId);
+        Assert.Equal(purchaseOrderId, sent.Criteria.PurchaseOrderId);
+        Assert.Equal(from, sent.Criteria.FromDate);
+        Assert.Equal(to, sent.Criteria.ToDate);
+        Assert.Null(sent.Criteria.PurchaseOrderStatus);
+        Assert.Null(sent.Criteria.SupplierInvoiceStatus);
+    }
+
+    [Fact]
+    public async Task ExportPurchaseReceipts_Returns403_WhenForbidden()
+    {
+        var mediator = new Mock<IMediator>();
+        mediator.Setup(m => m.Send(It.IsAny<ExportBusinessDatasetQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Result.Failure<BusinessExportFile>(new Error(BusinessDataExportErrors.Forbidden, "Accès refusé.")));
+        var controller = new DataExportsController(mediator.Object);
+
+        var result = await controller.ExportPurchaseReceipts(null, null, null, null, null, null, CancellationToken.None);
+
+        var forbidden = Assert.IsType<ObjectResult>(result);
+        Assert.Equal(403, forbidden.StatusCode);
+        var body = Assert.IsType<ApiResponse<object>>(forbidden.Value);
+        Assert.Equal(BusinessDataExportErrors.Forbidden, body.Code);
     }
 }
 

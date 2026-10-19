@@ -330,6 +330,132 @@ public sealed class PurchaseReceiptRepositoryTests : IDisposable
         Assert.Equal("bl-conserve.pdf", kept[0].FileName);
     }
 
+    [Fact]
+    public async Task ListForExportAsync_MatchesSearchAndSummary_ForEveryScreenFilter()
+    {
+        var seed = await SeedExportReceiptsAsync();
+
+        var cases = new (string? Search, PurchaseReceiptStatus? Status, Guid? SupplierId, DateTime? From, DateTime? To)[]
+        {
+            (null, null, null, null, null),
+            ("BR-2026-000201", null, null, null, null),
+            ("Export Beta", null, null, null, null),
+            ("REF-EXP", null, null, null, null),
+            ("BL-EXP-3", null, null, null, null),
+            (null, PurchaseReceiptStatus.Draft, null, null, null),
+            (null, PurchaseReceiptStatus.Validated, null, null, null),
+            (null, PurchaseReceiptStatus.PartiallyInvoiced, null, null, null),
+            (null, null, seed.SupplierA, null, null),
+            (null, null, null, new DateTime(2026, 2, 1), new DateTime(2026, 2, 28)),
+            ("Export", PurchaseReceiptStatus.Draft, seed.SupplierB, new DateTime(2026, 1, 1), new DateTime(2026, 12, 31))
+        };
+
+        foreach (var (search, status, supplierId, from, to) in cases)
+        {
+            var export = await _repository.ListForExportAsync(search, status, supplierId, null, from, to, 100, 100);
+            var (items, total) = await _repository.SearchAsync(search, status, supplierId, null, from, to, 1, 1000);
+            var summary = await _repository.GetSummaryAsync(search, status, supplierId, null, from, to);
+
+            Assert.Equal(items.Select(r => r.Id).OrderBy(id => id), export.Documents.Select(r => r.Id).OrderBy(id => id));
+            Assert.Equal(total, export.DocumentCount);
+            Assert.Equal(summary.Count, export.DocumentCount);
+            Assert.Equal(summary.TotalTtc, export.Documents.Sum(r => r.TotalAmount));
+            Assert.Equal(export.Documents.Sum(r => r.LineCount), export.LineCount);
+            Assert.Equal(export.LineCount, export.Lines.Count);
+        }
+    }
+
+    [Fact]
+    public async Task ListForExportAsync_ProjectsHeadersAndLines_InScreenOrder()
+    {
+        var seed = await SeedExportReceiptsAsync();
+
+        var export = await _repository.ListForExportAsync(null, null, null, null, null, null, 100, 100);
+
+        Assert.Equal(
+            new[] { "BR-2026-000203", "BR-2026-000202", "BR-2026-000201" },
+            export.Documents.Select(r => r.Number).ToArray());
+        var invoiced = export.Documents.Single(r => r.Number == "BR-2026-000201");
+        Assert.Equal(PurchaseReceiptStatus.PartiallyInvoiced, invoiced.Status);
+        Assert.Equal("Fournisseur Export Alpha", invoiced.SupplierName);
+        Assert.Equal("Entrepôt BR", invoiced.WarehouseName);
+        Assert.Null(invoiced.PurchaseOrderNumber);
+        Assert.Equal("REF-EXP-1", invoiced.SupplierReference);
+        Assert.Equal("BL-EXP-1", invoiced.DeliveryNoteNumber);
+        Assert.Equal("Transports Export", invoiced.TransporterName);
+        Assert.Equal(2, invoiced.LineCount);
+        Assert.NotNull(invoiced.ValidatedAt);
+        Assert.Equal(seed.Invoiced.TotalAmount.Amount, invoiced.TotalAmount);
+        Assert.Equal(seed.Invoiced.SubTotal.Amount, invoiced.SubTotal);
+        Assert.Equal(seed.Invoiced.TotalVat.Amount, invoiced.TotalVat);
+
+        Assert.Equal(
+            new[] { "BR-2026-000203", "BR-2026-000202", "BR-2026-000201", "BR-2026-000201" },
+            export.Lines.Select(l => l.DocumentNumber).ToArray());
+        var invoicedLines = export.Lines.Where(l => l.DocumentNumber == "BR-2026-000201").ToArray();
+        Assert.Equal(new[] { 1, 2 }, invoicedLines.Select(l => l.LineNumber).ToArray());
+        var first = invoicedLines[0];
+        Assert.Equal("BRX001", first.ProductCode);
+        Assert.Equal("Produit export 1", first.ProductName);
+        Assert.Equal(10m, first.ReceivedQuantity);
+        Assert.Equal(4m, first.InvoicedQuantity);
+        Assert.Equal(5m, first.DiscountPercent);
+        Assert.Equal(VatRate.Standard, first.VatRate);
+        Assert.Equal(seed.Invoiced.Lines.First(l => l.LineNumber == 1).Total.Amount, first.Total);
+    }
+
+    [Fact]
+    public async Task ListForExportAsync_OverLimit_ReturnsCountsWithoutRows()
+    {
+        await SeedExportReceiptsAsync();
+
+        var tooManyDocuments = await _repository.ListForExportAsync(null, null, null, null, null, null, 2, 100);
+        Assert.Equal(3, tooManyDocuments.DocumentCount);
+        Assert.Equal(4, tooManyDocuments.LineCount);
+        Assert.Empty(tooManyDocuments.Documents);
+        Assert.Empty(tooManyDocuments.Lines);
+
+        var tooManyLines = await _repository.ListForExportAsync(null, null, null, null, null, null, 100, 3);
+        Assert.Equal(4, tooManyLines.LineCount);
+        Assert.Empty(tooManyLines.Documents);
+        Assert.Empty(tooManyLines.Lines);
+    }
+
+    private async Task<(Guid SupplierA, Guid SupplierB, PurchaseReceipt Invoiced)> SeedExportReceiptsAsync()
+    {
+        var category = await PersistCategoryAsync("Cat. BR Export", "Catégorie export BR");
+        var product1 = await PersistProductAsync("BRX001", "Produit export 1", 100m, category.Id);
+        var product2 = await PersistProductAsync("BRX002", "Produit export 2", 40m, category.Id);
+        var (supplierA, warehouse) = await PersistSupplierAndWarehouseAsync(
+            "Fournisseur Export Alpha", "br-export-a@test.com", "1234567/A/B/C/911");
+        var (supplierB, _) = await PersistSupplierAndWarehouseAsync(
+            "Fournisseur Export Beta", "br-export-b@test.com", "1234567/A/B/C/912");
+
+        var invoiced = PurchaseReceipt.Create(
+            PurchaseReceiptNumber.Create("BR", 2026, 201), supplierA, warehouse, new DateTime(2026, 1, 15),
+            supplierReference: "REF-EXP-1", transporterName: "Transports Export", deliveryNoteNumber: "BL-EXP-1").Value;
+        Assert.True(invoiced.AddLine(product1, 10m, Money.Create(100m, "TND"), discountPercent: 5m).IsSuccess);
+        Assert.True(invoiced.AddLine(product2, 3m, Money.Create(40m, "TND")).IsSuccess);
+        Assert.True(invoiced.MarkValidated().IsSuccess);
+        var firstLine = invoiced.Lines.First(l => l.LineNumber == 1);
+        Assert.True(invoiced.ApplyInvoicing(new[] { (firstLine.Id, 4m) }).IsSuccess);
+        await _repository.AddAsync(invoiced);
+
+        var draftB = PurchaseReceipt.Create(
+            PurchaseReceiptNumber.Create("BR", 2026, 202), supplierB, warehouse, new DateTime(2026, 2, 10),
+            supplierReference: "REF-EXP-2").Value;
+        Assert.True(draftB.AddLine(product2, 2m, Money.Create(40m, "TND")).IsSuccess);
+        await _repository.AddAsync(draftB);
+
+        var draftA = PurchaseReceipt.Create(
+            PurchaseReceiptNumber.Create("BR", 2026, 203), supplierA, warehouse, new DateTime(2026, 3, 5),
+            deliveryNoteNumber: "BL-EXP-3").Value;
+        Assert.True(draftA.AddLine(product1, 1m, Money.Create(100m, "TND")).IsSuccess);
+        await _repository.AddAsync(draftA);
+
+        return (supplierA.Id, supplierB.Id, invoiced);
+    }
+
     private async Task<ProductCategory> PersistCategoryAsync(string code, string name)
     {
         using var context = _contextFactory.CreateContext();

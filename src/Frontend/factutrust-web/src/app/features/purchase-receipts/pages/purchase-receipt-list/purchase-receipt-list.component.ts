@@ -19,6 +19,8 @@ import { SkeletonTableComponent, SkeletonColumn } from '@shared/components/skele
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { TableTotalsBarComponent, TotalMetric } from '@shared/components/table-totals-bar/table-totals-bar.component';
+import { ExportExcelButtonComponent } from '@shared/components/export-excel-button/export-excel-button.component';
+import { DataExportFilters } from '@core/services/data-export.service';
 import { formatLocalDate } from '@core/utils/date.util';
 import {
   PurchaseReceiptService,
@@ -50,7 +52,7 @@ interface StatusOption {
     TagModule, DatePickerModule, ToastModule,
     PageHeaderComponent, BreadcrumbComponent, SkeletonTableComponent,
     EmptyStateComponent, ButtonComponent, TableTotalsBarComponent,
-    PurchaseReceiptImportDialogComponent
+    PurchaseReceiptImportDialogComponent, ExportExcelButtonComponent
   ],
   template: `
     <app-breadcrumb [items]="breadcrumbItems"></app-breadcrumb>
@@ -65,6 +67,7 @@ interface StatusOption {
           iconPos="left"
           (clicked)="importDialogVisible.set(true)" i18n="@@purchase-receipts.pages.importer.depuis.un.document.1a2b3c70"> Importer depuis un document </app-button>
       }
+      <app-export-excel-button dataset="purchase-receipts" [filters]="purchaseReceiptExportFilters" />
       @if (canCreate()) {
         <app-button
           variant="primary"
@@ -395,6 +398,16 @@ export class PurchaseReceiptListComponent implements OnInit, OnDestroy {
   selectedSupplierId: string | null = null;
   fromDate: Date | null = null;
   toDate: Date | null = null;
+
+  /** Filtres de l'écran au moment du clic. Le statut Brouillon vaut 0 : il ne faut pas le convertir en null. */
+  readonly purchaseReceiptExportFilters = (): DataExportFilters => ({
+    search: this.searchTerm || null,
+    status: this.selectedStatus,
+    supplierId: this.selectedSupplierId,
+    fromDate: this.fromDate,
+    toDate: this.toDate
+  });
+
   page = 1;
   pageSize = 20;
 

@@ -20,6 +20,7 @@ public sealed class BusinessDataExportCoordinator
     private readonly IQuoteRepository _quotes;
     private readonly IDeliveryNoteRepository _deliveryNotes;
     private readonly IPurchaseOrderRepository _purchaseOrders;
+    private readonly IPurchaseReceiptRepository _purchaseReceipts;
     private readonly IWarehouseRepository _warehouses;
     private readonly IStockItemRepository _stockItems;
     private readonly IStockMovementRepository _movements;
@@ -35,6 +36,7 @@ public sealed class BusinessDataExportCoordinator
         IQuoteRepository quotes,
         IDeliveryNoteRepository deliveryNotes,
         IPurchaseOrderRepository purchaseOrders,
+        IPurchaseReceiptRepository purchaseReceipts,
         IWarehouseRepository warehouses,
         IStockItemRepository stockItems,
         IStockMovementRepository movements,
@@ -49,6 +51,7 @@ public sealed class BusinessDataExportCoordinator
         _quotes = quotes;
         _deliveryNotes = deliveryNotes;
         _purchaseOrders = purchaseOrders;
+        _purchaseReceipts = purchaseReceipts;
         _warehouses = warehouses;
         _stockItems = stockItems;
         _movements = movements;
@@ -139,6 +142,7 @@ public sealed class BusinessDataExportCoordinator
             BusinessDataset.PurchaseOrders => await PurchaseOrdersAsync(effective, cancellationToken),
             BusinessDataset.StockItems => await StockItemsAsync(effective, cancellationToken),
             BusinessDataset.StockMovements => await MovementsAsync(effective, cancellationToken),
+            BusinessDataset.PurchaseReceipts => await PurchaseReceiptsAsync(effective, cancellationToken),
             _ => Result.Failure<IReadOnlyList<ExcelSheetModel>>(new Error(
                 BusinessDataExportErrors.UnknownDataset,
                 "Jeu de données inconnu."))
@@ -287,6 +291,24 @@ public sealed class BusinessDataExportCoordinator
         {
             BusinessExportSheets.PurchaseOrders(data.Documents),
             BusinessExportSheets.PurchaseOrderLines(data.Lines)
+        });
+    }
+
+    private async Task<Result<IReadOnlyList<ExcelSheetModel>>> PurchaseReceiptsAsync(
+        BusinessExportCriteria criteria,
+        CancellationToken cancellationToken)
+    {
+        var data = await _purchaseReceipts.ListForExportAsync(
+            criteria.Search, criteria.PurchaseReceiptStatus, criteria.SupplierId, criteria.PurchaseOrderId,
+            criteria.FromDate, criteria.ToDate,
+            BusinessDataExportLimits.Documents, BusinessDataExportLimits.Lines, cancellationToken);
+        var blocked = FirstOverflow(data.DocumentCount, data.LineCount, 0, "Bons de réception", "Lignes BR", "Lignes BR");
+        if (blocked is not null)
+            return blocked;
+        return Result.Success<IReadOnlyList<ExcelSheetModel>>(new[]
+        {
+            BusinessExportSheets.PurchaseReceipts(data.Documents),
+            BusinessExportSheets.PurchaseReceiptLines(data.Lines)
         });
     }
 

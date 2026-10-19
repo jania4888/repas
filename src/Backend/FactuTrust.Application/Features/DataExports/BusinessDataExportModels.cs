@@ -16,7 +16,8 @@ public enum BusinessDataset
     DeliveryNotes,
     PurchaseOrders,
     StockItems,
-    StockMovements
+    StockMovements,
+    PurchaseReceipts
 }
 
 public static class BusinessDataExportLimits
@@ -102,6 +103,8 @@ public sealed record BusinessExportCriteria
     public QuoteStatus? QuoteStatus { get; init; }
     public DeliveryNoteStatus? DeliveryNoteStatus { get; init; }
     public PurchaseOrderStatus? PurchaseOrderStatus { get; init; }
+    public PurchaseReceiptStatus? PurchaseReceiptStatus { get; init; }
+    public Guid? PurchaseOrderId { get; init; }
 
     public string Describe()
     {
@@ -136,6 +139,8 @@ public sealed record BusinessExportCriteria
             parts.Add(SafeStatus(() => DeliveryNoteStatus.Value.ToDisplayString()));
         if (PurchaseOrderStatus.HasValue)
             parts.Add(SafeStatus(() => PurchaseOrderStatus.Value.ToDisplayString()));
+        if (PurchaseReceiptStatus.HasValue)
+            parts.Add(SafeStatus(() => PurchaseReceiptStatus.Value.ToDisplayString()));
         if (DocumentType == InvoiceType.CreditNote)
             parts.Add("Avoirs");
         else if (DocumentType == InvoiceType.Standard)
@@ -217,6 +222,7 @@ public static class BusinessDatasetCatalog
             case "purchase-orders": dataset = BusinessDataset.PurchaseOrders; return true;
             case "stock-items": dataset = BusinessDataset.StockItems; return true;
             case "stock-movements": dataset = BusinessDataset.StockMovements; return true;
+            case "purchase-receipts": dataset = BusinessDataset.PurchaseReceipts; return true;
             default: return false;
         }
     }
@@ -234,6 +240,7 @@ public static class BusinessDatasetCatalog
         BusinessDataset.PurchaseOrders => Permissions.PurchaseOrders.Read,
         BusinessDataset.StockItems => Permissions.Stock.Read,
         BusinessDataset.StockMovements => Permissions.Stock.Read,
+        BusinessDataset.PurchaseReceipts => Permissions.PurchaseReceipts.Read,
         _ => throw new ArgumentOutOfRangeException(nameof(dataset))
     };
 
@@ -250,6 +257,7 @@ public static class BusinessDatasetCatalog
         BusinessDataset.PurchaseOrders => "Bons_de_commande",
         BusinessDataset.StockItems => "Stock",
         BusinessDataset.StockMovements => "Mouvements_stock",
+        BusinessDataset.PurchaseReceipts => "Bons_de_reception",
         _ => "Export"
     };
 }

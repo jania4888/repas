@@ -17,6 +17,7 @@ public sealed class ExportBusinessDatasetQueryValidator : AbstractValidator<Expo
     {
         RuleFor(x => x.Criteria.Search).MaximumLength(200);
         RuleFor(x => x.Criteria.Governorate).MaximumLength(100);
+        RuleFor(x => x.Criteria.PurchaseReceiptStatus).IsInEnum();
         RuleFor(x => x.Criteria)
             .Must(c => c.FromDate is null || c.ToDate is null || c.FromDate.Value.Date <= c.ToDate.Value.Date)
             .WithMessage("La date de début doit précéder la date de fin.");
