@@ -125,7 +125,18 @@
 }
 
 .lines-table col.col-unit {
-  width: 72px;
+  width: 96px;
+}
+
+// Le libellé « Unité » (et sa valeur, ex. « Pièce ») doit rester lisible :
+// on réduit le padding horizontal de la cellule et de son champ désactivé.
+.lines-table th.col-unit,
+.lines-table td.col-unit {
+  padding-inline: var(--spacing-1);
+}
+
+.lines-table td.col-unit input {
+  padding-inline: var(--spacing-1);
 }
 
 .lines-table col.col-qty-ord,
