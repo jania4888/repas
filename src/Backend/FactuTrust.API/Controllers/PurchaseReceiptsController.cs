@@ -1,4 +1,5 @@
 using FactuTrust.API.Authorization;
+using FactuTrust.Application.Common.Files;
 using FactuTrust.Application.Common.Interfaces;
 using FactuTrust.Application.Common.Interfaces.Repositories;
 using FactuTrust.Application.Common.Interfaces.Services;
@@ -389,7 +390,22 @@ public class PurchaseReceiptsController : ControllerBase
         if (receipt is null)
             return NotFound(ApiResponse<Guid>.Fail("Bon de réception introuvable."));
 
-        var safeFileName = Path.GetFileName(file.FileName);
+        UploadValidator.ValidationResult validation;
+        string normalizedContentType;
+        await using (var headerStream = file.OpenReadStream())
+        {
+            var (header, bytesRead) = await UploadValidator.ReadHeaderAsync(
+                headerStream, UploadValidator.RequiredHeaderBytes, cancellationToken);
+            var extension = Path.GetExtension(Path.GetFileName(file.FileName ?? string.Empty));
+            normalizedContentType = UploadValidator.NormalizeDeclaredContentType(file.ContentType, extension);
+            validation = UploadValidator.Validate(
+                file.FileName, normalizedContentType, file.Length, header.AsMemory(0, bytesRead), MaxUploadBytes);
+        }
+
+        if (!validation.IsValid)
+            return BadRequest(ApiResponse<Guid>.Fail(validation.ErrorMessage!));
+
+        var safeFileName = validation.SafeFileName!;
         var relativePath = Path.Combine(
             "purchase-receipts",
             id.ToString("N"),
@@ -409,7 +425,7 @@ public class PurchaseReceiptsController : ControllerBase
         var createResult = PurchaseReceiptAttachment.Create(
             receipt,
             safeFileName,
-            file.ContentType,
+            normalizedContentType,
             file.Length,
             relativePath,
             _currentUser.Email ?? _currentUser.UserId?.ToString());
@@ -429,7 +445,10 @@ public class PurchaseReceiptsController : ControllerBase
             return BadRequest(ApiResponse<Guid>.Fail(addResult.Error.Description));
         }
 
-        await _purchaseReceiptRepository.UpdateAsync(receipt, cancellationToken);
+        // Insert direct de la ligne fille : UpdateAsync attache le graphe détaché et suivrait le
+        // nouvel attachement (clé Guid déjà assignée) comme Unchanged — jamais INSERT (régression
+        // constatée : 200 OK + id retourné, mais aucune ligne en PurchaseReceiptAttachments).
+        await _purchaseReceiptRepository.AddAttachmentAsync(createResult.Value, cancellationToken);
 
         await _auditService.LogAsync(
             AuditActions.PurchaseReceipt.AttachmentAdded,
@@ -467,7 +486,9 @@ public class PurchaseReceiptsController : ControllerBase
         if (removeResult.IsFailure)
             return BadRequest(ApiResponse<object>.Fail(removeResult.Error.Description));
 
-        await _purchaseReceiptRepository.UpdateAsync(receipt, cancellationToken);
+        // Delete direct de la ligne fille : via UpdateAsync, la collection marquée IsLoaded = false
+        // masquait la suppression — le fichier disparaissait du disque mais la ligne restait en base.
+        await _purchaseReceiptRepository.DeleteAttachmentAsync(attachment, cancellationToken);
 
         var basePath = _configuration["AccountingAttachments:BasePath"]
             ?? Path.Combine(_environment.ContentRootPath ?? AppContext.BaseDirectory, "App_Data", "attachments");

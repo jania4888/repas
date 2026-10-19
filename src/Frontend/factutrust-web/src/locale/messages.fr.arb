@@ -86867,6 +86867,293 @@
     ],
     "x-wave": "v4"
   },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.importer.un.bon.de.reception.1a2b3c01": "Importer un bon de réception",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.importer.un.bon.de.reception.1a2b3c01": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.importer.un.bon.de.reception.depuis.un.document.1a2b3c02": "Importer un bon de réception depuis un document",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.importer.un.bon.de.reception.depuis.un.document.1a2b3c02": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.envoi.du.document.1a2b3c03": "Envoi du document…",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.envoi.du.document.1a2b3c03": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.annuler.l.import.1a2b3c06": "Annuler l'import",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.annuler.l.import.1a2b3c06": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.annuler.1a2b3c07": " Annuler ",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.annuler.1a2b3c07": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.lecture.et.preparation.du.document.1a2b3c04": "Lecture et préparation du document…",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.lecture.et.preparation.du.document.1a2b3c04": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.l.analyse.peut.prendre.jusqu.a.3.minutes.1a2b3c05": "L'analyse peut prendre jusqu'à 3 minutes la première fois.",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.l.analyse.peut.prendre.jusqu.a.3.minutes.1a2b3c05": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.l.import.a.echoue.1a2b3c08": "L'import a échoué",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.l.import.a.echoue.1a2b3c08": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.reessayer.1a2b3c09": " Réessayer ",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.reessayer.1a2b3c09": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.saisir.manuellement.1a2b3c0a": " Saisir manuellement ",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.saisir.manuellement.1a2b3c0a": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.importez.un.bon.de.reception.existant.1a2b3c0b": "Importez un bon de réception existant",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.importez.un.bon.de.reception.existant.1a2b3c0b": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.bon.de.livraison.ou.facture.fournisseur.pdf.r.1a2b3c0c": " Bon de livraison ou facture fournisseur (PDF recommandé ; photos acceptées). Les données extraites seront à vérifier avant d'enregistrer le bon de réception. ",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.bon.de.livraison.ou.facture.fournisseur.pdf.r.1a2b3c0c": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.choisir.un.fichier.a.importer.1a2b3c0d": "Choisir un fichier à importer",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.choisir.un.fichier.a.importer.1a2b3c0d": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.choisir.un.fichier.1a2b3c0e": " Choisir un fichier ",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.choisir.un.fichier.1a2b3c0e": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.ce.document.sera.transmis.a.un.service.d.extra.1a2b3c10": "Ce document sera transmis à un service d'extraction externe pour analyse.",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.ce.document.sera.transmis.a.un.service.d.extra.1a2b3c10": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.lecture.du.document.1a2b3c11": "Lecture du document…",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.lecture.du.document.1a2b3c11": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.analyse.par.le.service.d.extraction.document.1a2b3c12": "Analyse par le service d'extraction documentaire…",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.analyse.par.le.service.d.extraction.document.1a2b3c12": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.analyse.par.le.modele.d.import.ia.1a2b3c13": "Analyse par le modèle d'import IA…",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.analyse.par.le.modele.d.import.ia.1a2b3c13": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.ou.deposez.le.fichier.ici.pdf.jpg.png.taille.1a2b3c0f": "Ou déposez le fichier ici — PDF, JPG, PNG (max {$maxMo} Mo)",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.ou.deposez.le.fichier.ici.pdf.jpg.png.taille.1a2b3c0f": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.format.non.supporte.utilisez.un.pdf.ou.une.im.1a2b3c14": "Format non supporté. Utilisez un PDF ou une image (JPG, PNG).",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.format.non.supporte.utilisez.un.pdf.ou.une.im.1a2b3c14": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.fichier.trop.volumineux.maximum.mo.1a2b3c18": "Fichier trop volumineux (maximum {$maxMo} Mo).",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.fichier.trop.volumineux.maximum.mo.1a2b3c18": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.lecture.du.document.1a2b3c16": "Lecture du document…",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.lecture.du.document.1a2b3c16": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-dialog.ts.analyse.en.cours.1a2b3c17": "Analyse en cours…",
+  "@features.purchase-receipts.components.purchase-receipt-import-dialog.ts.analyse.en.cours.1a2b3c17": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-dialog/purchase-receipt-import-dialog.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.bon.de.reception.pre.rempli.depuis.un.docume.1a2b3c20": "Bon de réception pré-rempli depuis un document importé",
+  "@features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.bon.de.reception.pre.rempli.depuis.un.docume.1a2b3c20": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-review-banner/purchase-receipt-import-review-banner.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.confiance.faible.verifiez.attentivement.le.1a2b3c21": "Confiance faible : vérifiez attentivement les données avant d'enregistrer.",
+  "@features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.confiance.faible.verifiez.attentivement.le.1a2b3c21": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-review-banner/purchase-receipt-import-review-banner.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.confiance.moyenne.relisez.les.donnees.extraite.1a2b3c22": "Confiance moyenne : relisez les données extraites.",
+  "@features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.confiance.moyenne.relisez.les.donnees.extraite.1a2b3c22": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-review-banner/purchase-receipt-import-review-banner.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.verifiez.les.donnees.extraites.avant.d.enregi.1a2b3c23": "Vérifiez les données extraites avant d'enregistrer.",
+  "@features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.verifiez.les.donnees.extraites.avant.d.enregi.1a2b3c23": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-review-banner/purchase-receipt-import-review-banner.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.sera.joint.au.bon.a.l.enregistrement.1a2b3c29": "Sera joint au bon à l'enregistrement",
+  "@features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.sera.joint.au.bon.a.l.enregistrement.1a2b3c29": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-review-banner/purchase-receipt-import-review-banner.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.le.total.calcule.ne.correspond.pas.au.total.1a2b3c24": "Le total calculé ne correspond pas au total lu sur le document.",
+  "@features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.le.total.calcule.ne.correspond.pas.au.total.1a2b3c24": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-review-banner/purchase-receipt-import-review-banner.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.accepter.l.ecart.1a2b3c25": "Accepter l'écart",
+  "@features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.accepter.l.ecart.1a2b3c25": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-review-banner/purchase-receipt-import-review-banner.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.certains.articles.ont.ete.rapproches.par.nom.1a2b3c26": "Certains articles ont été rapprochés par nom.",
+  "@features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.certains.articles.ont.ete.rapproches.par.nom.1a2b3c26": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-review-banner/purchase-receipt-import-review-banner.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.confirmer.les.suggestions.1a2b3c27": "Confirmer les suggestions",
+  "@features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.confirmer.les.suggestions.1a2b3c27": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-review-banner/purchase-receipt-import-review-banner.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.a.faire.avant.d.enregistrer.1a2b3c28": "À faire avant d'enregistrer :",
+  "@features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.a.faire.avant.d.enregistrer.1a2b3c28": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-review-banner/purchase-receipt-import-review-banner.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.service.d.extraction.documentaire.1a2b3c36": "Service d'extraction documentaire",
+  "@features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.service.d.extraction.documentaire.1a2b3c36": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-review-banner/purchase-receipt-import-review-banner.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.modele.d.import.ia.1a2b3c37": "Modèle d'import IA",
+  "@features.purchase-receipts.components.purchase-receipt-import-review-banner.ts.modele.d.import.ia.1a2b3c37": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-review-banner/purchase-receipt-import-review-banner.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-supplier-card.ts.fournisseur.rapproche.1a2b3c30": "Fournisseur rapproché",
+  "@features.purchase-receipts.components.purchase-receipt-import-supplier-card.ts.fournisseur.rapproche.1a2b3c30": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-supplier-card/purchase-receipt-import-supplier-card.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-supplier-card.ts.plusieurs.fournisseurs.correspondent.1a2b3c31": "Plusieurs fournisseurs correspondent",
+  "@features.purchase-receipts.components.purchase-receipt-import-supplier-card.ts.plusieurs.fournisseurs.correspondent.1a2b3c31": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-supplier-card/purchase-receipt-import-supplier-card.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-supplier-card.ts.fournisseur.trouve.mais.inactif.1a2b3c32": "Fournisseur trouvé mais inactif",
+  "@features.purchase-receipts.components.purchase-receipt-import-supplier-card.ts.fournisseur.trouve.mais.inactif.1a2b3c32": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-supplier-card/purchase-receipt-import-supplier-card.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-supplier-card.ts.le.nom.ne.correspond.pas.au.matricule.fiscal.1a2b3c33": "Le nom ne correspond pas au matricule fiscal trouvé",
+  "@features.purchase-receipts.components.purchase-receipt-import-supplier-card.ts.le.nom.ne.correspond.pas.au.matricule.fiscal.1a2b3c33": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-supplier-card/purchase-receipt-import-supplier-card.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-supplier-card.ts.aucun.fournisseur.identifie.1a2b3c34": "Aucun fournisseur identifié",
+  "@features.purchase-receipts.components.purchase-receipt-import-supplier-card.ts.aucun.fournisseur.identifie.1a2b3c34": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-supplier-card/purchase-receipt-import-supplier-card.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.components.purchase-receipt-import-supplier-card.ts.creer.ce.fournisseur.1a2b3c35": " Créer ce fournisseur ",
+  "@features.purchase-receipts.components.purchase-receipt-import-supplier-card.ts.creer.ce.fournisseur.1a2b3c35": {
+    "x-files": [
+      "src/app/features/purchase-receipts/components/purchase-receipt-import-supplier-card/purchase-receipt-import-supplier-card.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "purchase-receipts.pages.chargement.a209b664": "Chargement...",
   "@purchase-receipts.pages.chargement.a209b664": {
     "x-files": [
@@ -87459,6 +87746,13 @@
     ],
     "x-wave": "v4"
   },
+  "purchase-receipts.pages.indisponible.lors.d.un.import.depuis.un.document.1a2b3c80": "Indisponible lors d'un import depuis un document.",
+  "@purchase-receipts.pages.indisponible.lors.d.un.import.depuis.un.document.1a2b3c80": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "purchase-receipts.pages.entrepot.64a6a11c": "Entrepôt",
   "@purchase-receipts.pages.entrepot.64a6a11c": {
     "x-files": [
@@ -87620,6 +87914,41 @@
     ],
     "x-wave": "v4"
   },
+  "purchase-receipts.pages.puce.reconnu.1a2b3c90": "Reconnu",
+  "@purchase-receipts.pages.puce.reconnu.1a2b3c90": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.puce.associe.1a2b3c91": "Associé",
+  "@purchase-receipts.pages.puce.associe.1a2b3c91": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.puce.cree.1a2b3c92": "Créé",
+  "@purchase-receipts.pages.puce.cree.1a2b3c92": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.puce.a.resoudre.1a2b3c93": "À résoudre",
+  "@purchase-receipts.pages.puce.a.resoudre.1a2b3c93": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.creer.le.produit.1a2b3c94": " Créer le produit ",
+  "@purchase-receipts.pages.creer.le.produit.1a2b3c94": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "purchase-receipts.pages.0.b6589fc6": "0",
   "@purchase-receipts.pages.0.b6589fc6": {
     "x-files": [
@@ -87629,6 +87958,27 @@
   },
   "purchase-receipts.pages.supprimer.la.ligne.7e5f9ae0": "Supprimer la ligne",
   "@purchase-receipts.pages.supprimer.la.ligne.7e5f9ae0": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.document.a1b2c3d1": "Document :",
+  "@purchase-receipts.pages.document.a1b2c3d1": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.la.tva.du.document.differe.de.celle.de.l.artic.a1b2c3d2": " La TVA du document diffère de celle de l'article. Le bon utilise la TVA de l'article. ",
+  "@purchase-receipts.pages.la.tva.du.document.differe.de.celle.de.l.artic.a1b2c3d2": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.quantite.a.verifier.a1b2c3d3": " Quantité à vérifier ",
+  "@purchase-receipts.pages.quantite.a.verifier.a1b2c3d3": {
     "x-files": [
       "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
     ],
@@ -87657,6 +88007,55 @@
   },
   "purchase-receipts.pages.reste.a.recevoir.ht.b1ff628f": "Reste à recevoir HT",
   "@purchase-receipts.pages.reste.a.recevoir.ht.b1ff628f": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.totaux.du.document.a1b2c3e0": "Totaux du document",
+  "@purchase-receipts.pages.totaux.du.document.a1b2c3e0": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.total.document.ht.a1b2c3e4": "Document (HT)",
+  "@purchase-receipts.pages.total.document.ht.a1b2c3e4": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.tva.document.a1b2c3e5": "Document (TVA)",
+  "@purchase-receipts.pages.tva.document.a1b2c3e5": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.total.document.ttc.a1b2c3e1": "Document (TTC)",
+  "@purchase-receipts.pages.total.document.ttc.a1b2c3e1": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.hors.timbre.fiscal.et.fodec.a1b2c3e6": "Hors timbre fiscal et FODEC.",
+  "@purchase-receipts.pages.hors.timbre.fiscal.et.fodec.a1b2c3e6": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.bon.calcule.ttc.a1b2c3e2": "Bon (calculé, TTC)",
+  "@purchase-receipts.pages.bon.calcule.ttc.a1b2c3e2": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.les.totaux.differents.du.document.verifiez.a1b2c3e3": " Les totaux diffèrent du document : vérifiez quantités, prix et remises. ",
+  "@purchase-receipts.pages.les.totaux.differents.du.document.verifiez.a1b2c3e3": {
     "x-files": [
       "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
     ],
@@ -87713,6 +88112,13 @@
   },
   "purchase-receipts.pages.supprimer.la.piece.jointe.9b073c7b": "Supprimer la pièce jointe",
   "@purchase-receipts.pages.supprimer.la.piece.jointe.9b073c7b": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.enregistrement.bloque.tant.que.les.articles.importes.1a2b3c95": "Enregistrement bloqué tant que les articles importés ne sont pas associés à un produit.",
+  "@purchase-receipts.pages.enregistrement.bloque.tant.que.les.articles.importes.1a2b3c95": {
     "x-files": [
       "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
     ],
@@ -87886,6 +88292,55 @@
     ],
     "x-wave": "v4"
   },
+  "purchase-receipts.purchase-receipt-form.ts.selectionnez.un.fournisseur.a1b2c301": "Sélectionnez un fournisseur.",
+  "@purchase-receipts.purchase-receipt-form.ts.selectionnez.un.fournisseur.a1b2c301": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.purchase-receipt-form.ts.selectionnez.un.entrepot.a1b2c302": "Sélectionnez un entrepôt.",
+  "@purchase-receipts.purchase-receipt-form.ts.selectionnez.un.entrepot.a1b2c302": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.purchase-receipt-form.ts.associez.ou.creez.le.produit.de.la.ligne.a1b2c303": "Associez ou créez le produit de la ligne {$lineNumber}.",
+  "@purchase-receipts.purchase-receipt-form.ts.associez.ou.creez.le.produit.de.la.ligne.a1b2c303": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.purchase-receipt-form.ts.fournisseur.cree.a1b2c3f0": "Fournisseur créé",
+  "@purchase-receipts.purchase-receipt-form.ts.fournisseur.cree.a1b2c3f0": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.purchase-receipt-form.ts.fournisseur.cree.et.selectionne.a1b2c3f1": "Le fournisseur a été créé et sélectionné.",
+  "@purchase-receipts.purchase-receipt-form.ts.fournisseur.cree.et.selectionne.a1b2c3f1": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.purchase-receipt-form.ts.produit.applique.a1b2c3f2": "Produit appliqué",
+  "@purchase-receipts.purchase-receipt-form.ts.produit.applique.a1b2c3f2": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.purchase-receipt-form.ts.applique.a.n.autre.s.ligne.s.a1b2c3f3": "Appliqué à {$count} autre(s) ligne(s)",
+  "@purchase-receipts.purchase-receipt-form.ts.applique.a.n.autre.s.ligne.s.a1b2c3f3": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "purchase-receipt-form.component.summary.Tra_abilit_inco": "Traçabilité incomplète",
   "@purchase-receipt-form.component.summary.Tra_abilit_inco": {
     "x-files": [
@@ -87970,6 +88425,34 @@
     ],
     "x-wave": "v4"
   },
+  "purchase-receipts.purchase-receipt-form.ts.piece.jointe.non.envoyee.a1b2c400": "Pièce jointe non envoyée",
+  "@purchase-receipts.purchase-receipt-form.ts.piece.jointe.non.envoyee.a1b2c400": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.purchase-receipt-form.ts.vous.n.avez.pas.le.droit.de.joindre.a1b2c401": "Bon de réception enregistré. Vous n'avez pas le droit de joindre des fichiers : le document source n'a pas été joint.",
+  "@purchase-receipts.purchase-receipt-form.ts.vous.n.avez.pas.le.droit.de.joindre.a1b2c401": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.purchase-receipt-form.ts.piece.jointe.a1b2c402": "Pièce jointe",
+  "@purchase-receipts.purchase-receipt-form.ts.piece.jointe.a1b2c402": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.purchase-receipt-form.ts.document.source.non.joint.a1b2c403": "Bon de réception enregistré, mais le document source n'a pas pu être joint. Ajoutez-le depuis la section Pièces jointes.",
+  "@purchase-receipts.purchase-receipt-form.ts.document.source.non.joint.a1b2c403": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts"
+    ],
+    "x-wave": "v4"
+  },
   "purchase-receipt-form.component.summary.Pi_ce_jointe": "Pièce jointe",
   "@purchase-receipt-form.component.summary.Pi_ce_jointe": {
     "x-files": [
@@ -88007,6 +88490,13 @@
   },
   "purchase-receipts.pages.enregistrez.et.validez.les.receptions.de.25825b29": "Enregistrez et validez les réceptions de marchandises fournisseurs.",
   "@purchase-receipts.pages.enregistrez.et.validez.les.receptions.de.25825b29": {
+    "x-files": [
+      "src/app/features/purchase-receipts/pages/purchase-receipt-list/purchase-receipt-list.component.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "purchase-receipts.pages.importer.depuis.un.document.1a2b3c70": " Importer depuis un document ",
+  "@purchase-receipts.pages.importer.depuis.un.document.1a2b3c70": {
     "x-files": [
       "src/app/features/purchase-receipts/pages/purchase-receipt-list/purchase-receipt-list.component.ts"
     ],
@@ -88282,6 +88772,188 @@
   "@purchase-receipts.routes.title.D_tail_bon_de_r_ception_": {
     "x-files": [
       "src/app/features/purchase-receipts/purchase-receipts.routes.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.services.purchase-receipt-import.service.ts.l.analyse.a.depasse.le.delai.maximal.reessaye.a3a9d9ea": "L'analyse a dépassé le délai maximal. Réessayez dans un instant.",
+  "@features.purchase-receipts.services.purchase-receipt-import.service.ts.l.analyse.a.depasse.le.delai.maximal.reessaye.a3a9d9ea": {
+    "x-files": [
+      "src/app/features/purchase-receipts/services/purchase-receipt-import.service.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.services.purchase-receipt-import.service.ts.impossible.de.joindre.le.serveur.verifiez.qu.6f6c0f6a": "Impossible de joindre le serveur. Vérifiez que l'API est démarrée.",
+  "@features.purchase-receipts.services.purchase-receipt-import.service.ts.impossible.de.joindre.le.serveur.verifiez.qu.6f6c0f6a": {
+    "x-files": [
+      "src/app/features/purchase-receipts/services/purchase-receipt-import.service.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.services.purchase-receipt-import.service.ts.fichier.trop.volumineux.maximum.10.mo.3d6c2a11": "Fichier trop volumineux (maximum 10 Mo).",
+  "@features.purchase-receipts.services.purchase-receipt-import.service.ts.fichier.trop.volumineux.maximum.10.mo.3d6c2a11": {
+    "x-files": [
+      "src/app/features/purchase-receipts/services/purchase-receipt-import.service.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.services.purchase-receipt-import.service.ts.vous.n.avez.pas.les.droits.necessaires.pour.imp.9c7d1a0e": "Vous n'avez pas les droits nécessaires pour importer un document.",
+  "@features.purchase-receipts.services.purchase-receipt-import.service.ts.vous.n.avez.pas.les.droits.necessaires.pour.imp.9c7d1a0e": {
+    "x-files": [
+      "src/app/features/purchase-receipts/services/purchase-receipt-import.service.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.services.purchase-receipt-import.service.ts.trop.de.demandes.d.import.reessayez.dans.un.in.0e1b7c5d": "Trop de demandes d'import. Réessayez dans un instant.",
+  "@features.purchase-receipts.services.purchase-receipt-import.service.ts.trop.de.demandes.d.import.reessayez.dans.un.in.0e1b7c5d": {
+    "x-files": [
+      "src/app/features/purchase-receipts/services/purchase-receipt-import.service.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.services.purchase-receipt-import.service.ts.le.service.d.extraction.documentaire.est.indisp.1a2b3c4d": "Le service d'extraction documentaire est indisponible. Réessayez plus tard ou saisissez le bon de réception manuellement.",
+  "@features.purchase-receipts.services.purchase-receipt-import.service.ts.le.service.d.extraction.documentaire.est.indisp.1a2b3c4d": {
+    "x-files": [
+      "src/app/features/purchase-receipts/services/purchase-receipt-import.service.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.services.purchase-receipt-import.service.ts.impossible.d.analyser.ce.document.verifiez.le.fi.2b3c4d5e": "Impossible d'analyser ce document. Vérifiez le fichier ou saisissez le bon de réception manuellement.",
+  "@features.purchase-receipts.services.purchase-receipt-import.service.ts.impossible.d.analyser.ce.document.verifiez.le.fi.2b3c4d5e": {
+    "x-files": [
+      "src/app/features/purchase-receipts/services/purchase-receipt-import.service.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.anomalie.detectee.pendant.l.extraction.du.doc.1a2b3c4e": "Anomalie détectée pendant l'extraction du document.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.anomalie.detectee.pendant.l.extraction.du.doc.1a2b3c4e": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.fournisseur.et.le.destinataire.semblent.i.2b3c4d5f": "Le fournisseur et le destinataire semblent inversés sur le document.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.fournisseur.et.le.destinataire.semblent.i.2b3c4d5f": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.aucun.fournisseur.identifie.sur.le.document.3c4d5e60": "Aucun fournisseur identifié sur le document.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.aucun.fournisseur.identifie.sur.le.document.3c4d5e60": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.type.de.document.detecte.n.est.pas.celui.4d5e6f71": "Le type de document détecté n'est pas celui attendu pour un bon de réception.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.type.de.document.detecte.n.est.pas.celui.4d5e6f71": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.fournisseur.rapproche.est.inactif.5e6f7082": "Le fournisseur rapproché est inactif.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.fournisseur.rapproche.est.inactif.5e6f7082": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.nom.du.fournisseur.ne.correspond.pas.au.ma.6f708293": "Le nom du fournisseur ne correspond pas au matricule fiscal trouvé.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.nom.du.fournisseur.ne.correspond.pas.au.ma.6f708293": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.matricule.fiscal.lu.sur.le.document.n.est.70829304": "Le matricule fiscal lu sur le document n'est pas valide.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.matricule.fiscal.lu.sur.le.document.n.est.70829304": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.taux.de.tva.lu.differe.de.celui.de.l.artic.82930415": "Le taux de TVA lu diffère de celui de l'article en base ; le taux de l'article est appliqué.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.taux.de.tva.lu.differe.de.celui.de.l.artic.82930415": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.l.article.rapproche.est.inactif.ou.est.un.mo.93041526": "L'article rapproché est inactif ou est un modèle de variantes.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.l.article.rapproche.est.inactif.ou.est.un.mo.93041526": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.taux.de.tva.non.lu.taux.standard.applique.par.a4152637": "Taux de TVA non lu : taux standard appliqué par défaut.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.taux.de.tva.non.lu.taux.standard.applique.par.a4152637": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.quantite.non.lisible.ou.invalide.sur.cette.li.b5263748": "Quantité non lisible ou invalide sur cette ligne.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.quantite.non.lisible.ou.invalide.sur.cette.li.b5263748": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.remise.lue.hors.bornes.ignoree.c6374859": "Remise lue hors bornes, ignorée.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.remise.lue.hors.bornes.ignoree.c6374859": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.total.de.la.ligne.ne.correspond.pas.au.cal.d748596a": "Le total de la ligne ne correspond pas au calcul (quantité × prix − remise).",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.total.de.la.ligne.ne.correspond.pas.au.cal.d748596a": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.total.ht.du.document.ne.correspond.pas.au.e8596a7b": "Le total HT du document ne correspond pas au total calculé des lignes.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.total.ht.du.document.ne.correspond.pas.au.e8596a7b": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.total.ttc.du.document.ne.correspond.pas.au.f96a7b8c": "Le total TTC du document ne correspond pas au total calculé.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.total.ttc.du.document.ne.correspond.pas.au.f96a7b8c": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.un.timbre.fiscal.est.mentionne.sur.le.documen.a97b8c9d": "Un timbre fiscal est mentionné sur le document ; il n'est pas reporté automatiquement sur le bon de réception.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.un.timbre.fiscal.est.mentionne.sur.le.documen.a97b8c9d": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.document.n.est.pas.libelle.en.dinars.tunis.b8c9dae1": "Le document n'est pas libellé en dinars tunisiens.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.document.n.est.pas.libelle.en.dinars.tunis.b8c9dae1": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.document.comporte.beaucoup.de.lignes.verif.c9dae2f0": "Le document comporte beaucoup de lignes ; vérifiez qu'aucune n'a été omise.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.le.document.comporte.beaucoup.de.lignes.verif.c9dae2f0": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
+    ],
+    "x-wave": "v4"
+  },
+  "features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.un.bon.de.reception.similaire.existe.peut.et.dae2f031": "Un bon de réception similaire existe peut-être déjà pour ce fournisseur.",
+  "@features.purchase-receipts.utils.purchase-receipt-import.mapping.ts.un.bon.de.reception.similaire.existe.peut.et.dae2f031": {
+    "x-files": [
+      "src/app/features/purchase-receipts/utils/purchase-receipt-import.mapping.ts"
     ],
     "x-wave": "v4"
   },
@@ -127512,6 +128184,13 @@
     ],
     "x-wave": "v1"
   },
+  "shared.components.quick-create-product-dialog.quick-create-product-dialog.prix.d.achat.lu.sur.le.document.importe.1a2b3c60": "Prix d'achat lu sur le document importé : {$INTERPOLATION} TND",
+  "@shared.components.quick-create-product-dialog.quick-create-product-dialog.prix.d.achat.lu.sur.le.document.importe.1a2b3c60": {
+    "x-files": [
+      "src/app/shared/components/quick-create-product-dialog/quick-create-product-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
   "shared.components.quick-create-product-dialog.quick-create-product-dialog.tva.fb62cb5d": "TVA ",
   "@shared.components.quick-create-product-dialog.quick-create-product-dialog.tva.fb62cb5d": {
     "x-files": [
@@ -127635,6 +128314,181 @@
   "@shared.quick-create-product-dialog.ts.impossible.de.creer.le.produit.12c9376c": {
     "x-files": [
       "src/app/shared/components/quick-create-product-dialog/quick-create-product-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.particulier.1a2b3c40": "Particulier",
+  "@shared.components.quick-create-supplier-dialog.ts.particulier.1a2b3c40": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.entreprise.1a2b3c41": "Entreprise",
+  "@shared.components.quick-create-supplier-dialog.ts.entreprise.1a2b3c41": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.creer.un.fournisseur.1a2b3c42": "Créer un fournisseur",
+  "@shared.components.quick-create-supplier-dialog.ts.creer.un.fournisseur.1a2b3c42": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.nom.ou.raison.sociale.1a2b3c43": "Nom ou raison sociale ",
+  "@shared.components.quick-create-supplier-dialog.ts.nom.ou.raison.sociale.1a2b3c43": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.type.1a2b3c44": "Type",
+  "@shared.components.quick-create-supplier-dialog.ts.type.1a2b3c44": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.nif.matricule.fiscal.1a2b3c45": "NIF / Matricule fiscal ",
+  "@shared.components.quick-create-supplier-dialog.ts.nif.matricule.fiscal.1a2b3c45": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.ex.1772793w.a.m.000.1a2b3c46": "Ex. 1772793W/A/M/000",
+  "@shared.components.quick-create-supplier-dialog.ts.ex.1772793w.a.m.000.1a2b3c46": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.matricule.fiscal.invalide.1a2b3c47": "Matricule fiscal invalide",
+  "@shared.components.quick-create-supplier-dialog.ts.matricule.fiscal.invalide.1a2b3c47": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.email.1a2b3c48": "Email",
+  "@shared.components.quick-create-supplier-dialog.ts.email.1a2b3c48": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.email.invalide.1a2b3c49": "Email invalide",
+  "@shared.components.quick-create-supplier-dialog.ts.email.invalide.1a2b3c49": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.telephone.1a2b3c4a": "Téléphone",
+  "@shared.components.quick-create-supplier-dialog.ts.telephone.1a2b3c4a": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.rue.1a2b3c4b": "Rue ",
+  "@shared.components.quick-create-supplier-dialog.ts.rue.1a2b3c4b": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.ce.champ.est.obligatoire.1a2b3c4c": "Ce champ est obligatoire",
+  "@shared.components.quick-create-supplier-dialog.ts.ce.champ.est.obligatoire.1a2b3c4c": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.ville.1a2b3c4d": "Ville ",
+  "@shared.components.quick-create-supplier-dialog.ts.ville.1a2b3c4d": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.gouvernorat.1a2b3c4e": "Gouvernorat ",
+  "@shared.components.quick-create-supplier-dialog.ts.gouvernorat.1a2b3c4e": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.code.postal.1a2b3c4f": "Code postal",
+  "@shared.components.quick-create-supplier-dialog.ts.code.postal.1a2b3c4f": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.fournisseurs.similaires.1a2b3c50": "Fournisseurs similaires existants",
+  "@shared.components.quick-create-supplier-dialog.ts.fournisseurs.similaires.1a2b3c50": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.utiliser.1a2b3c51": "Utiliser",
+  "@shared.components.quick-create-supplier-dialog.ts.utiliser.1a2b3c51": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.utiliser.ce.fournisseur.1a2b3c52": "Utiliser ce fournisseur",
+  "@shared.components.quick-create-supplier-dialog.ts.utiliser.ce.fournisseur.1a2b3c52": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.annuler.1a2b3c53": "Annuler",
+  "@shared.components.quick-create-supplier-dialog.ts.annuler.1a2b3c53": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.creation.1a2b3c54": "Création...",
+  "@shared.components.quick-create-supplier-dialog.ts.creation.1a2b3c54": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.creer.et.selectionner.1a2b3c55": "Créer et sélectionner",
+  "@shared.components.quick-create-supplier-dialog.ts.creer.et.selectionner.1a2b3c55": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.min.2.caracteres.1a2b3c56": "Min. 2 caractères",
+  "@shared.components.quick-create-supplier-dialog.ts.min.2.caracteres.1a2b3c56": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.impossible.de.creer.le.fournisseur.1a2b3c57": "Impossible de créer le fournisseur.",
+  "@shared.components.quick-create-supplier-dialog.ts.impossible.de.creer.le.fournisseur.1a2b3c57": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
+    ],
+    "x-wave": "v1"
+  },
+  "shared.components.quick-create-supplier-dialog.ts.un.fournisseur.avec.ces.informations.existe.de.1a2b3c58": "Un fournisseur avec ces informations existe déjà.",
+  "@shared.components.quick-create-supplier-dialog.ts.un.fournisseur.avec.ces.informations.existe.de.1a2b3c58": {
+    "x-files": [
+      "src/app/shared/components/quick-create-supplier-dialog/quick-create-supplier-dialog.component.ts"
     ],
     "x-wave": "v1"
   },

@@ -147,10 +147,10 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
             return (DocumentDirections.Purchase, null);
         }
 
-        if (SameMatricule(company.Nif?.Value, document.Seller?.Nif))
+        if (ThirdPartyMatricule.SameMatricule(company.Nif?.Value, document.Seller?.Nif))
             return (DocumentDirections.Sale, "Émetteur = votre société (matricule fiscal identique).");
 
-        if (SameMatricule(company.Nif?.Value, document.Buyer?.Nif))
+        if (ThirdPartyMatricule.SameMatricule(company.Nif?.Value, document.Buyer?.Nif))
             return (DocumentDirections.Purchase, "Destinataire = votre société (matricule fiscal identique).");
 
         var sellerScore = InvoiceImportParsing.Similarity(company.Name, document.Seller?.Name);
@@ -439,20 +439,6 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
     }
 
     /// <summary>
-    /// Même matricule si les deux côtés se canonisent vers la forme carte, sinon repli sur la
-    /// comparaison alphanumérique (saisie incomplète déjà tolérée à l'import).
-    /// </summary>
-    private static bool SameMatricule(string? left, string? right)
-    {
-        if (NIF.TryCanonicalize(left, out var canonicalLeft) && NIF.TryCanonicalize(right, out var canonicalRight))
-            return string.Equals(canonicalLeft, canonicalRight, StringComparison.Ordinal);
-
-        var normalizedLeft = InvoiceImportParsing.NormalizeNif(left);
-        var normalizedRight = InvoiceImportParsing.NormalizeNif(right);
-        return normalizedLeft.Length > 0 && normalizedLeft == normalizedRight;
-    }
-
-    /// <summary>
     /// Normalise le matricule fiscal extrait d'une pièce pour comparaison avec
     /// <see cref="ChartOfAccount.FiscalIdNormalized"/> : lettres et chiffres en majuscules — la même
     /// règle que <see cref="ChartOfAccount.NormalizeFiscalId"/>, appliquée directement à la saisie
@@ -473,12 +459,12 @@ public sealed class AccountingEntryProposalService : IAccountingEntryProposalSer
             if (isSale)
             {
                 var byNif = await _mediator.Send(new GetClientsQuery(Search: nif, PageSize: 10), cancellationToken);
-                var hit = byNif.Items.FirstOrDefault(c => SameMatricule(c.Nif, nif));
+                var hit = byNif.Items.FirstOrDefault(c => ThirdPartyMatricule.SameMatricule(c.Nif, nif));
                 return hit is null ? null : new ThirdPartyFicheMatch(hit.Id, hit.Name);
             }
 
             var byNifSupplier = await _mediator.Send(new GetSuppliersQuery(Search: nif, PageSize: 10), cancellationToken);
-            var hitSupplier = byNifSupplier.Items.FirstOrDefault(s => SameMatricule(s.Nif, nif));
+            var hitSupplier = byNifSupplier.Items.FirstOrDefault(s => ThirdPartyMatricule.SameMatricule(s.Nif, nif));
             return hitSupplier is null ? null : new ThirdPartyFicheMatch(hitSupplier.Id, hitSupplier.Name);
         }
         catch (Exception ex)

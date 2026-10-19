@@ -281,6 +281,7 @@ public static class AuditActions
         public const string Exported = "PurchaseReceipt.Exported";
         public const string AttachmentAdded = "PurchaseReceipt.AttachmentAdded";
         public const string AttachmentDeleted = "PurchaseReceipt.AttachmentDeleted";
+        public const string DocumentAnalyzed = "PurchaseReceipt.DocumentAnalyzed";
     }
 
     public static class SupplierInvoice

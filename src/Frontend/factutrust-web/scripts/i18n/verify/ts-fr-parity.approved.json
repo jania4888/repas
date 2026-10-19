@@ -288,8 +288,8 @@
     "reason": "Phrase découpée par concaténation ($localize + expression + $localize) fusionnée en un seul $localize à placeholders (i18n:concat --fix) : mêmes lettres, même ordre à l'exécution, texte français identique."
   },
   "src/app/shared/components/quick-create-product-dialog/quick-create-product-dialog.component.ts": {
-    "sha": "589758155cc966b71b54b140bf32fb00f39448f8bf0cf3c3e89ca736da4840d9",
-    "reason": "Options déplacées vers shared/constants/coded-option-labels : mêmes valeurs envoyées à l’API, même ordre, libellés français identiques (seuls les libellés deviennent traduisibles)."
+    "sha": "c5a968926be4f39d1ba5fde829e04c8a4060a23a3dc19452f5467b02ad8ea755",
+    "reason": "Options déplacées vers shared/constants/coded-option-labels (écart déjà relu, conservé). Ajout du texte 'Prix d'achat lu sur le document importé : ' (indice affiché seulement si purchasePrice() non nul, pré-remplissage depuis l'import de bon de réception) : nouveau segment FR, aucun texte existant modifié."
   },
   "src/app/shared/services/product-autocomplete.service.ts": {
     "sha": "8b6bfc1773573656cc5de6d005417efd3be8cccde6c1bc5fbff699593fc496a5",
@@ -350,5 +350,13 @@
   "src/app/features/stock/stock-list/stock-list.component.ts": {
     "sha": "69e48198d87ebb06fbe226bacd9378f4e06d3b973bf8737e01d6e0af3c6c30a5",
     "reason": "Colonne « Coût unitaire » de la liste de stock : ajout d'une infobulle expliquant que, pour un article FIFO/LIFO, le P.U. affiché est le coût de la prochaine sortie et que la valeur reste la somme des couches (P.U. x Qte != Valeur). Nouveau segment FR assume ; aucun libellé existant modifié."
+  },
+  "src/app/features/purchase-receipts/pages/purchase-receipt-form/purchase-receipt-form.component.ts": {
+    "sha": "b762bb4b98378d9a5b3e54e124552f2935e3e8b3f39c509eaa5b22fb2cc9c5f5",
+    "reason": "Import de bon de réception depuis un document : nouveaux textes FR (messages de pièce jointe, résolution de ligne importée, raisons de blocage 'Sélectionnez un fournisseur/un entrepôt', 'Associez ou créez le produit de la ligne'), toasts (fournisseur créé/produit appliqué) et constantes internes (ids ciblés par focusImportField, états de résolution 'pending'/'matched'/'mapped'/'created', statuts d'upload). Aucun texte existant modifié. Revue import document : $localize pour totaux imprimés et conservation des fournisseurs injectés lors du chargement."
+  },
+  "src/app/features/purchase-receipts/pages/purchase-receipt-list/purchase-receipt-list.component.ts": {
+    "sha": "710dcb939934f8f923e263acbfc029590ce3e397a38f1612aba60103f0b8d443",
+    "reason": "Import de bon de réception depuis un document : nouvelle route interne '/purchase-receipts/new' utilisée après un import réussi (texte FR inchangé)."
   }
 }

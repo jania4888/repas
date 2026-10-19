@@ -31,11 +31,14 @@ public sealed class UploadValidatorTests
     }
 
     [Theory]
-    [InlineData("invoice.pdf.exe")]
-    [InlineData("report.csv.php")]
-    [InlineData("photo.png.html")]
+    [InlineData("invoice.exe.pdf")]
+    [InlineData("report.php.csv")]
+    [InlineData("photo.html.png")]
     public void Rejects_double_extension(string fileName)
     {
+        // The dangerous extension is the INTERMEDIATE segment here (the classic smuggling shape:
+        // some consumer may execute based on an earlier extension while another only looks at the
+        // last one) — not the final one, which is itself allow-listed.
         var result = UploadValidator.Validate(fileName, "application/pdf", 10, ValidPdfHeader);
 
         Assert.False(result.IsValid);
@@ -135,4 +138,106 @@ public sealed class UploadValidatorTests
 
         Assert.True(result.IsValid);
     }
+
+    // ---------- NormalizeDeclaredContentType (code review item 1) ----------
+
+    [Theory]
+    [InlineData("application/octet-stream", ".pdf", "application/pdf")]
+    [InlineData("", ".pdf", "application/pdf")]
+    [InlineData("application/octet-stream", ".jpg", "image/jpeg")]
+    [InlineData("image/jpg", ".jpg", "image/jpeg")]
+    [InlineData("image/pjpeg", ".jpeg", "image/jpeg")]
+    [InlineData("application/octet-stream", ".png", "image/png")]
+    public void NormalizeDeclaredContentType_maps_generic_or_legacy_types_to_the_canonical_type(
+        string declared, string extension, string expected)
+    {
+        Assert.Equal(expected, UploadValidator.NormalizeDeclaredContentType(declared, extension));
+    }
+
+    [Fact]
+    public void NormalizeDeclaredContentType_fixes_up_case_variants_of_the_allowed_type()
+    {
+        Assert.Equal("application/pdf", UploadValidator.NormalizeDeclaredContentType("APPLICATION/PDF", ".pdf"));
+    }
+
+    [Fact]
+    public void NormalizeDeclaredContentType_leaves_an_unrelated_declared_type_untouched()
+    {
+        // Not generic/legacy and not a recognized case-variant of an allowed type for this
+        // extension — Validate's own allow-list check still rejects the mismatch afterwards.
+        Assert.Equal("image/png", UploadValidator.NormalizeDeclaredContentType("image/png", ".pdf"));
+    }
+
+    [Theory]
+    [InlineData("application/pdf", ".pdf", "application/pdf")]
+    [InlineData("application/octet-stream", null, "application/octet-stream")]
+    public void NormalizeDeclaredContentType_handles_already_correct_or_missing_extension(
+        string declared, string? extension, string expected)
+    {
+        Assert.Equal(expected, UploadValidator.NormalizeDeclaredContentType(declared, extension));
+    }
+
+    [Fact]
+    public void Accepts_pdf_with_octet_stream_content_type_after_normalization()
+    {
+        var normalized = UploadValidator.NormalizeDeclaredContentType("application/octet-stream", ".pdf");
+        var result = UploadValidator.Validate("bon.pdf", normalized, 1024, ValidPdfHeader);
+
+        Assert.True(result.IsValid);
+    }
+
+    [Fact]
+    public void Accepts_jpg_with_legacy_image_jpg_content_type_after_normalization()
+    {
+        byte[] jpegHeader = { 0xFF, 0xD8, 0xFF, 0xE0, 0, 0, 0, 0 };
+        var normalized = UploadValidator.NormalizeDeclaredContentType("image/jpg", ".jpg");
+        var result = UploadValidator.Validate("photo.jpg", normalized, 1024, jpegHeader);
+
+        Assert.True(result.IsValid);
+    }
+
+    [Fact]
+    public void Accepts_upper_case_mime_variant_after_normalization()
+    {
+        var normalized = UploadValidator.NormalizeDeclaredContentType("APPLICATION/PDF", ".pdf");
+        var result = UploadValidator.Validate("bon.pdf", normalized, 1024, ValidPdfHeader);
+
+        Assert.True(result.IsValid);
+    }
+
+    [Fact]
+    public void Normalization_never_rescues_spoofed_content_from_magic_byte_rejection()
+    {
+        // Declared type says PDF (even after "normalization" it stays application/pdf), but the
+        // actual bytes are a PE executable — the magic-byte check must still reject it.
+        var normalized = UploadValidator.NormalizeDeclaredContentType("application/octet-stream", ".pdf");
+        var result = UploadValidator.Validate("invoice.pdf", normalized, 1024, PeExecutableHeader);
+
+        Assert.False(result.IsValid);
+    }
+
+    // ---------- Double-extension: same-family names accepted (code review item 1) ----------
+
+    [Fact]
+    public void Accepts_same_family_double_extension_as_a_benign_save_as_artifact()
+    {
+        // "scan.pdf.pdf" : the intermediate segment ".pdf" is allow-listed, not dangerous — this is
+        // no longer flagged as a double-extension attack.
+        var result = UploadValidator.Validate("scan.pdf.pdf", "application/pdf", 10, ValidPdfHeader);
+
+        Assert.True(result.IsValid);
+    }
+
+    [Theory]
+    [InlineData("invoice.exe.pdf")]
+    [InlineData("report.php.csv")]
+    [InlineData("photo.html.png")]
+    public void Still_rejects_double_extension_with_a_truly_dangerous_intermediate_segment(string fileName)
+    {
+        var result = UploadValidator.Validate(fileName, "application/pdf", 10, ValidPdfHeader);
+
+        Assert.False(result.IsValid);
+        Assert.Contains("double extension", result.ErrorMessage);
+    }
 }
+

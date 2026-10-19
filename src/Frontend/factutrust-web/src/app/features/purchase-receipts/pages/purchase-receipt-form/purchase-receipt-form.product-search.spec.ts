@@ -3,6 +3,7 @@ import { ActivatedRoute, provideRouter } from '@angular/router';
 import { of, Subject, throwError } from 'rxjs';
 import { delay } from 'rxjs/operators';
 
+import { AuthService } from '@core/services/auth.service';
 import { ErrorHandlerService } from '@core/services/error-handler.service';
 import { ProductService } from '@core/services/product.service';
 import { PurchaseOrderService } from '@core/services/purchase-order.service';
@@ -99,7 +100,15 @@ describe('PurchaseReceiptFormComponent — recherche article', () => {
         { provide: ToastService, useValue: { add: toastAdd } },
         { provide: WarehouseContextService, useValue: { selectedWarehouseId: () => null } },
         { provide: BarcodeLookupService, useValue: {} },
-        { provide: BarcodeFeedbackService, useValue: {} }
+        { provide: BarcodeFeedbackService, useValue: {} },
+        {
+          provide: AuthService,
+          useValue: {
+            hasPermission: () => true,
+            hasAllPermissions: () => true,
+            isFirmDelegatedReadonly: () => false
+          }
+        }
       ]
     })
       .overrideComponent(PurchaseReceiptFormComponent, {

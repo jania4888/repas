@@ -148,6 +148,21 @@ public sealed class PurchaseReceiptRepository : IPurchaseReceiptRepository
             .AnyAsync(r => r.Number.Value == number, cancellationToken);
     }
 
+    public async Task<bool> ExistsActiveForSupplierDeliveryNoteAsync(
+        Guid supplierId, string deliveryNoteNumber, CancellationToken cancellationToken = default)
+    {
+        var trimmed = (deliveryNoteNumber ?? string.Empty).Trim();
+        if (trimmed.Length == 0)
+            return false;
+
+        await using var context = _contextFactory.CreateContext();
+        return await context.PurchaseReceipts.AnyAsync(
+            r => r.SupplierId == supplierId
+                && r.DeliveryNoteNumber == trimmed
+                && r.Status != PurchaseReceiptStatus.Cancelled,
+            cancellationToken);
+    }
+
     public async Task<PurchaseReceipt> AddAsync(PurchaseReceipt entity, CancellationToken cancellationToken = default)
     {
         await using var context = _contextFactory.CreateContext();
@@ -315,6 +330,33 @@ public sealed class PurchaseReceiptRepository : IPurchaseReceiptRepository
     {
         await using var context = _contextFactory.CreateContext();
         context.PurchaseReceipts.Remove(entity);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task AddAttachmentAsync(PurchaseReceiptAttachment attachment, CancellationToken cancellationToken = default)
+    {
+        // Insert direct de l'enfant (même pattern que FiscalScheduleRepository.AddAttachmentAsync) :
+        // Add() marque la pièce jointe Added et traverse la navigation PurchaseReceipt (détachée,
+        // clé déjà assignée) — EF la marque alors Added aussi (insertion doublon). On force donc
+        // explicitement Unchanged sur tout le reste du graphe découvert : seule la nouvelle ligne
+        // fille est insérée.
+        // Ne pas utiliser UpdateAsync pour ça : Attach() suivrait le nouvel enfant (clé Guid déjà
+        // assignée) comme Unchanged et la ligne ne serait jamais insérée.
+        await using var context = _contextFactory.CreateContext();
+        context.PurchaseReceiptAttachments.Add(attachment);
+        foreach (var entry in context.ChangeTracker.Entries())
+        {
+            if (!ReferenceEquals(entry.Entity, attachment))
+                entry.State = EntityState.Unchanged;
+        }
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteAttachmentAsync(PurchaseReceiptAttachment attachment, CancellationToken cancellationToken = default)
+    {
+        // Remove() attache l'entité détachée comme Deleted d'après sa clé — suffit pour le DELETE.
+        await using var context = _contextFactory.CreateContext();
+        context.PurchaseReceiptAttachments.Remove(attachment);
         await context.SaveChangesAsync(cancellationToken);
     }
 
