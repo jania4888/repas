@@ -210,10 +210,10 @@ test('fournisseur et produit à créer depuis le document importé', async ({ pa
       supplierId: null,
       supplierName: null,
       extractedName: 'Nouveau Fournisseur SARL',
-      extractedNif: '7654321B',
+      extractedNif: '7654321B/A/M/000',
       candidates: [],
       prefill: {
-        name: 'Nouveau Fournisseur SARL', type: 'Business', nif: '7654321B',
+        name: 'Nouveau Fournisseur SARL', type: 'Business', nif: '7654321B/A/M/000',
         street: 'Rue de la Gare', city: 'Sousse', postalCode: '4000', governorate: null,
         email: null, phone: null, missingRequiredFields: ['governorate']
       }
@@ -301,7 +301,7 @@ test('fichier rejeté sans appel réseau : taille et format non supportés', asy
   expect(importCalled).toBe(false);
 });
 
-test("erreurs serveur (429, 500) et annulation de l'analyse en cours", async ({ page }) => {
+test("erreurs serveur (429, 500) et fermeture de la boîte de dialogue pendant un import en cours", async ({ page }) => {
   await installMocks(page);
   let mode: '429' | '500' = '429';
   await page.route('**/api/purchasereceipts/import-document', route => {
@@ -322,16 +322,21 @@ test("erreurs serveur (429, 500) et annulation de l'analyse en cours", async ({ 
   await expect(page.getByText('Erreur serveur. Veuillez réessayer plus tard.')).toBeVisible({ timeout: 15_000 });
   await expect(page.getByText(/System\.|Exception|StackTrace/i)).toHaveCount(0);
 
-  // Annulation : la requête part mais n'est jamais résolue, « Annuler » ramène à l'état initial.
+  // Fermeture pendant un envoi en cours : la requête part mais n'est jamais résolue ; fermer la
+  // boîte de dialogue (Échap) désabonne l'import et ramène à la liste sans blocage ni erreur.
+  // (Le passage par la phase « analyse » avec sa barre « Annuler l'import » dépend d'événements
+  // de progression d'upload réels, que les routes mockées de Playwright n'émettent jamais ; ce
+  // cas est couvert au niveau unitaire dans purchase-receipt-import-dialog.component.spec.ts.)
   await page.unroute('**/api/purchasereceipts/import-document');
   await page.route('**/api/purchasereceipts/import-document', () => {
-    // Ne jamais répondre : simule une analyse en cours, interrompue par l'utilisateur.
+    // Ne jamais répondre : simule un import en cours, interrompu par l'utilisateur.
   });
   await page.getByRole('button', { name: 'Réessayer' }).click();
   await page.locator('.pid-file-input').setInputFiles(PDF);
-  await expect(page.getByRole('button', { name: "Annuler l'import" })).toBeVisible({ timeout: 15_000 });
-  await page.getByRole('button', { name: "Annuler l'import" }).click();
-  await expect(page.getByText('Importez un bon de réception existant')).toBeVisible();
+  await expect(page.getByText('Envoi du document…')).toBeVisible({ timeout: 15_000 });
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog', { name: 'Importer un bon de réception' })).toBeHidden();
+  await expect(page.getByRole('heading', { name: 'Bons de réception' })).toBeVisible();
 });
 
 test("échec de la jointe du document après enregistrement : avertissement, bon accessible en édition", async ({ page }) => {
